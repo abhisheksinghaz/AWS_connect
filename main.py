@@ -2,11 +2,15 @@ from paramiko import SSHClient, AutoAddPolicy, client
 from rich import print, pretty, inspect
 from hosts import hosts_map
 
-pretty.install()
+def exec_commands():
+    # stdin, stdout, stderr = client.exec_command('cat /etc/os-release')
+    # stdin, stdout, stderr = client.exec_command('uname -r')
+    stdin, stdout, stderr = client.exec_command('sudo yum update -y')
+    print(f'STDOUT: {stdout.read().decode("utf8")}')
 
+    
+# pretty.install()
 client = SSHClient()
-
-# def exec_commands():
 
 if __name__ == "__main__":
     client.load_host_keys('c:/Users/abhishek.singh/.ssh/known_hosts')
@@ -15,11 +19,11 @@ if __name__ == "__main__":
 
     for user,iplist in hosts_map.items():
         for ip in iplist:
-            print(user,ip)
 
+            print("Establishing connection to {}".format(ip))
             client.connect(ip, username=user)
-            print("Following is the info for instance {}".format(ip))
-            stdin, stdout, stderr = client.exec_command('cat /etc/os-release')
-            print(f'STDOUT: {stdout.read().decode("utf8")}')
-            print(f'STDERR: {stderr.read().decode("utf8")}')
+            exec_commands()
+            # print('*'*100)
+            print("Concluding the reports/output of : {} \n\n".format(ip))
+            print('*'*100)
             client.close()
